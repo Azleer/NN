@@ -42,14 +42,6 @@ Net::~Net()
     }
 }
 
-void Net::PrintArray(double *arr, int s)
-{
-    std::cout << "--------------" << std::endl;
-    for (int inp = 0; inp < s; inp++)
-    {
-        std::cout << arr[inp] << std::endl;
-    }
-}
 
 double* Net::query(double *in)
 {
@@ -68,13 +60,16 @@ void Net::train(double *in, double *targ)
 
 void Net::backPropagation()
 {
+    //Считаем ошибку на последнем слое.
     list->at(nlCount - 1).caltOutError(targets);
 
+    //Считаем ошибку для остальных слоев,  но для рассчета ошибки "этого" нужна ошибка ледующего слоя.
     for (int i = nlCount - 2; i >= 0; i--)
     {
         list->at(i).calcHiddnError(list->at(i+1).getError(), list->at(i+1).getMatrix(), list->at(i+1).getInCount(), list->at(i+1).getOutCount());
     }
 
+    //Обновляем веса
     for (int i = nlCount - 1; i > 0; i--)
     {
         list->at(i).updateMatrix(list->at(i-1).getHidden());
@@ -85,15 +80,17 @@ void Net::backPropagation()
 
 void Net::RunNet(bool ok)
 {
-    list->at(0).runtHidden(inputs);
-
+    //Просто прогон сети.
+    list->at(0).runtHidden(inputs); // Рассчитали первый входной
     for (int i = 1; i < nlCount; i++)
     {
-        list->at(i).runtHidden(list->at(i-1).getHidden());
+        list->at(i).runtHidden(list->at(i-1).getHidden()); // Считаем остальные и последний
     }
 
+    //Учить или нет.
     if (!ok)
     {
+        //Просто прогон
         //std::cout << "RunNet" << std::endl;
         for (int out = 0; out < outputNeurons; out++)
         {
@@ -101,7 +98,7 @@ void Net::RunNet(bool ok)
         }
         return;
     } else {
-
+        //учить
         backPropagation();
     }
 
@@ -169,6 +166,8 @@ void Net::Layers::initLayer(int inputs, int outputs)
     {
         matrix[inp] = (double*) malloc(out*sizeof(double));
     }
+
+    //Инициализируем веса
     for(int inp =0; inp < in+1; inp++)
     {
         for(int outp =0; outp < out; outp++)
@@ -178,7 +177,7 @@ void Net::Layers::initLayer(int inputs, int outputs)
     }
 }
 
-void Net::Layers::runtHidden(double *inputs)
+void Net::Layers::runtHidden(double *inputs) //Рассчет выхода слоя
 {
     for (int hid = 0; hid < out; hid++)
     {

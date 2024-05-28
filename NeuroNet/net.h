@@ -41,7 +41,6 @@ public:
 
     };
 
-    void PrintArray(double *arr, int s);
     double* query(double *in);
     void train(double* in, double* targ);
     void backPropagation();
