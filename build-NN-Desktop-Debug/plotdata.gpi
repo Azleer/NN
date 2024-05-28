@@ -1,0 +1,9 @@
+#! /usr/bin/gnuplot -persist
+set datafile separator ','
+set xlabel "X" 
+set ylabel "Y"
+set grid
+set yrange [-0.1:1.5]
+set xrange[-0.1:4*pi]
+set title "NeuroNet" font "Helvetica Bold, 20"
+plot 'data.txt' using 1:3 with lines title "NN anser", '' using 1:2 with lines title "(sin(x)+1)/2", '' using 1:4 with lines title "Error"
